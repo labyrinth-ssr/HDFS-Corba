@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.Assert.*;
 
 public class DataNodeTest {
-    static DataNode dn;
+    static DataNodeImpl dn;
 
     @Before
     public void setUp() {
