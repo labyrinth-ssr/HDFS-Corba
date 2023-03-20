@@ -25,6 +25,7 @@ public class FileDesc {
         int[] children;
         String size;
         int status; // 1 opened,0 cloded
+    boolean excluded=false;
 
     public FileDesc(String name) {
         this.id = id++;
@@ -65,13 +66,6 @@ public class FileDesc {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-//        try {
-//            reflect(this,sb);
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-        System.out.println(javabeanToJson(this));
-//        return sb.toString();
         return javabeanToJson(this);
     }
 
@@ -83,20 +77,12 @@ public class FileDesc {
     public static FileDesc jsonToJavaBean(String json) {
         Gson gson = new Gson();
         FileDesc fileInfo = gson.fromJson(json, FileDesc.class);//对于javabean直接给出class实例
-        System.out.println(fileInfo.toString());
         return  fileInfo;
     }
 
     public static FileDesc fromString(String str){
-
-//        Gson gson=new Gson();
-//        JsonParser jsonParser = new JsonParser();
-//        JsonArray jsonElements = jsonParser.parse(str).getAsJsonArray();//获取JsonArray对象
-//        for (JsonElement fileInfo : jsonElements){
-//            FileDesc fileInfo1 = gson.fromJson(fileInfo,FileDesc.class);
-//            fileInfos.add(fileInfo1);
-//        }
-
+        if (str == null)
+            return null;
         return jsonToJavaBean(str);
     }
 }

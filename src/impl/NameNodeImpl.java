@@ -13,14 +13,6 @@ import java.util.Objects;
 
 
 public class NameNodeImpl extends NameNodePOA {
-//    public class FileDesc {
-//        String name;
-//        String type;
-//        int[] locations;
-//        int[] children;
-//        String size;
-//        int status; // 1 opened,0 cloded
-//    }
     ArrayList<FileDesc> fileInfos = initFileDescs();
 
 
@@ -37,7 +29,6 @@ public class NameNodeImpl extends NameNodePOA {
             while((ch = fr.read()) != -1){
                 str.append((char) ch);
             }
-            System.out.println(str);
 
             Gson gson=new Gson();
             JsonParser jsonParser = new JsonParser();
@@ -46,8 +37,6 @@ public class NameNodeImpl extends NameNodePOA {
                 FileDesc fileInfo1 = gson.fromJson(fileInfo,FileDesc.class);
                 fileInfos.add(fileInfo1);
             }
-            System.out.println(fileInfos.size());
-            System.out.println(fileInfos.get(0).getName());
             return fileInfos;
         }catch (IOException e){
             System.out.println("io exception");
@@ -86,9 +75,11 @@ public class NameNodeImpl extends NameNodePOA {
 //    的open(filename,w)请求将会返回null
     @Override
     public String open(String filepath, int mode) {
+        System.out.println("open");
         for (FileDesc fileInfo : fileInfos) {
             if (Objects.equals(fileInfo.getName(), filepath)){
-                if (fileInfo.getStatus()==1){
+                System.out.println("equal"+fileInfo.toString());
+                if ((mode==0b10 || mode == 0b11) && fileInfo.getStatus()==1){
                     return null;
                 }
                 if (mode==0b10 || mode == 0b11){
@@ -98,6 +89,10 @@ public class NameNodeImpl extends NameNodePOA {
             }
         }
         FileDesc newFileInfo = new FileDesc(filepath);
+        if (mode==0b10 || mode == 0b11){
+            newFileInfo.setStatus(1);
+        }
+        fileInfos.add(newFileInfo);
         return newFileInfo.toString();
     }
 
@@ -105,14 +100,11 @@ public class NameNodeImpl extends NameNodePOA {
 //    close(filepath)：更新文件的元数据写入硬盘
     @Override
     public void close(String fileInfo) {
-
         FileDesc fileDesc = FileDesc.fromString(fileInfo);
-
         try {
             OutputStream f = new FileOutputStream(fileDesc.getName());
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-
     }
 }
