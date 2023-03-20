@@ -1,4 +1,15 @@
 package api;
+
+import org.omg.CORBA.ORB;
+import org.omg.CosNaming.NamingContextExt;
+import org.omg.CosNaming.NamingContextExtHelper;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.List;
+import java.util.Properties;
+import java.util.Scanner;
+
 public interface Client {
     int open(String filepath, int mode);
     void append(int fd, byte[] bytes);
@@ -9,4 +20,6 @@ public interface Client {
      */
     byte[] read(int fd);
     void close(int fd);
+
+
 }

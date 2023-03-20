@@ -1,14 +1,13 @@
 package api;
-//TODO: This file serves as a reference/inspiration, your should generate your DataNode interface using idjl command
-//  to be more specific, your generated file DataNodePOA should look like this file.
 
-public interface DataNode {
-    byte[] read(int block_id);
-    void append(int block_id, byte[] bytes);
 
-    /**
-     * @return Any of the "valid" data block's id, this is purely for sake of testing.
-     * The definition of valid should be included in your documentation
-     */
-    int randomBlockId();
-}
+/**
+* api/DataNode.java .
+* 由IDL-to-Java 编译器 (可移植), 版本 "3.2"生成
+* 从api.idl
+* 2023年3月16日 星期四 下午07时52分21秒 GMT+08:00
+*/
+
+public interface DataNode extends DataNodeOperations, org.omg.CORBA.Object, org.omg.CORBA.portable.IDLEntity 
+{
+} // interface DataNode

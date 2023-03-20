@@ -40,8 +40,6 @@ public class NameNodeTest {
         close(fileInfo, fileInfo2);
     }
 
-
-
     @Test
     /* open an existing and being written file in writing mode */
     public void testOpenWrite(){
