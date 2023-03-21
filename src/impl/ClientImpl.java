@@ -4,37 +4,73 @@ import api.*;
 import org.omg.CORBA.ORB;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
+import utils.FileDesc;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Scanner;
+import java.util.*;
 
 public class ClientImpl implements Client {
 
     static NameNode remoteObj;
 
+    static NameNodeImpl nn = new NameNodeImpl();
+    static DataNodeImpl dataNode = new DataNodeImpl();
+
+    class CFile{
+        FileDesc fileDesc;
+        int fd;
+    }
+
+    ArrayList<CFile> files = new ArrayList<>();
+
+    CFile getFileByFd(int fd){
+        for (CFile file :
+                files) {
+            if (file.fd == fd)
+                return file;
+        }
+        return null;
+    }
+
     @Override
     public int open(String filepath, int mode) {
+        FileDesc fileDesc = FileDesc.fromString(nn.open(filepath,mode));
+        CFile newFile = new CFile();
+        newFile.fileDesc=fileDesc;
+        newFile.fd = files.size();
+        files.add(newFile);
 
-        return 0;
+        return newFile.fd;
     }
 
     @Override
     public void append(int fd, byte[] bytes) {
-
+        CFile file = getFileByFd(fd);
+        FileDesc fileDesc = file.fileDesc;
+        int blockId = fileDesc.getLocations().get(0);
+        System.out.println("block id:"+blockId);
+        if (fileDesc.getMode() == 0b10 || fileDesc.getMode() == 0b11){
+            dataNode.append(blockId,bytes);
+        }
     }
 
     @Override
     public byte[] read(int fd) {
-        return new byte[0];
+        CFile file = getFileByFd(fd);
+        FileDesc fileDesc = file.fileDesc;
+        int blockId = fileDesc.getLocations().get(0);
+        System.out.println("block id:"+blockId);
+        if (fileDesc.getMode() == 0b01 || fileDesc.getMode() == 0b11)
+            return dataNode.read(blockId);
+        else return null;
     }
 
     @Override
     public void close(int fd) {
-
+        CFile file = getFileByFd(fd);
+        files.remove(file);
+        nn.close(file.fileDesc.toString());
     }
 
 

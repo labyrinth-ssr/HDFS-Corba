@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 
 //TODO: According to your design, complete the FileDesc class, which wraps the information returned by NameNode open()
@@ -21,15 +22,30 @@ public class FileDesc {
      */
     static long id = 0;
     String name;
-            int[] locations;
-        int[] children;
-        String size;
-        int status; // 1 opened,0 cloded
-    boolean excluded=false;
+    int fd;
+    ArrayList<Integer> locations;
+    int[] children;
+    String size;
+    int status; // 1 opened,0 cloded
+    boolean excluded = false;
 
     public FileDesc(String name) {
         this.id = id++;
         this.name = name;
+    }
+    int mode;
+
+
+    public ArrayList<Integer> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(ArrayList<Integer> locations) {
+        this.locations = locations;
+    }
+
+    public static long getId() {
+        return id;
     }
 
     public String getName() {
@@ -44,6 +60,13 @@ public class FileDesc {
         this.status = status;
     }
 
+    public int getMode() {
+        return mode;
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
+    }
     //    public static void reflect(Object e,StringBuilder sb) throws Exception {
 //        Class<? extends Object> cls = e.getClass();
 //        Field[] fields = cls.getDeclaredFields();

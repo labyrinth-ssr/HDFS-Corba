@@ -79,6 +79,7 @@ public class NameNodeImpl extends NameNodePOA {
         for (FileDesc fileInfo : fileInfos) {
             if (Objects.equals(fileInfo.getName(), filepath)){
                 System.out.println("equal"+fileInfo.toString());
+                fileInfo.setMode(mode);
                 if ((mode==0b10 || mode == 0b11) && fileInfo.getStatus()==1){
                     return null;
                 }
@@ -89,6 +90,10 @@ public class NameNodeImpl extends NameNodePOA {
             }
         }
         FileDesc newFileInfo = new FileDesc(filepath);
+        newFileInfo.setMode(mode);
+        ArrayList<Integer> locations = new ArrayList<>();
+        locations.add(0);
+        newFileInfo.setLocations(locations);
         if (mode==0b10 || mode == 0b11){
             newFileInfo.setStatus(1);
         }
