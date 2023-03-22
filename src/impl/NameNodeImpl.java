@@ -8,6 +8,7 @@ import com.google.gson.JsonParser;
 import utils.FileDesc;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -18,11 +19,9 @@ public class NameNodeImpl extends NameNodePOA {
 
     // 初始化时把硬盘上的Fsimage读取到内存
     public ArrayList<FileDesc> initFileDescs(){
-
         try {
             ArrayList<FileDesc> fileInfos = new ArrayList<>();
-            File file = new File("src/server/fs/fsimage.json");
-            // 创建 FileReader 对象
+            File file = new File("src/server/fs/FSImage.json");
             FileReader fr = new FileReader(file);
             StringBuilder str = new StringBuilder();
             int ch = 0;
@@ -37,6 +36,7 @@ public class NameNodeImpl extends NameNodePOA {
                 FileDesc fileInfo1 = gson.fromJson(fileInfo,FileDesc.class);
                 fileInfos.add(fileInfo1);
             }
+            System.out.println("namenode:init, current file num:"+fileInfos.size());
             return fileInfos;
         }catch (IOException e){
             System.out.println("io exception");
@@ -75,24 +75,25 @@ public class NameNodeImpl extends NameNodePOA {
 //    的open(filename,w)请求将会返回null
     @Override
     public String open(String filepath, int mode) {
-        System.out.println("open");
         for (FileDesc fileInfo : fileInfos) {
             if (Objects.equals(fileInfo.getName(), filepath)){
-                System.out.println("equal"+fileInfo.toString());
                 fileInfo.setMode(mode);
                 if ((mode==0b10 || mode == 0b11) && fileInfo.getStatus()==1){
-                    return null;
+                    System.out.println("namenode: open: opened by other writer");
+                    return "";
                 }
                 if (mode==0b10 || mode == 0b11){
                     fileInfo.setStatus(1);
                 }
+                System.out.println("namenode: open: "+fileInfo.toString());
                 return fileInfo.toString();
             }
         }
+        System.out.println("namenode: create file");
         FileDesc newFileInfo = new FileDesc(filepath);
         newFileInfo.setMode(mode);
         ArrayList<Integer> locations = new ArrayList<>();
-        locations.add(0);
+        locations.add((int)(Math.random()*(2)));
         newFileInfo.setLocations(locations);
         if (mode==0b10 || mode == 0b11){
             newFileInfo.setStatus(1);
@@ -101,14 +102,17 @@ public class NameNodeImpl extends NameNodePOA {
         return newFileInfo.toString();
     }
 
-
 //    close(filepath)：更新文件的元数据写入硬盘
     @Override
     public void close(String fileInfo) {
         FileDesc fileDesc = FileDesc.fromString(fileInfo);
+        System.out.println("namenode:close:"+fileDesc.getName());
         try {
-            OutputStream f = new FileOutputStream(fileDesc.getName());
-        } catch (FileNotFoundException e) {
+            FileOutputStream f = new FileOutputStream("FSImage");
+            f.write(fileInfo.getBytes(StandardCharsets.UTF_8));
+            f.flush();
+            f.close();
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

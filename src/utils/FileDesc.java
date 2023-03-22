@@ -23,7 +23,7 @@ public class FileDesc {
     static long id = 0;
     String name;
     int fd;
-    ArrayList<Integer> locations;
+    ArrayList<Integer> locations = new ArrayList<>();
     int[] children;
     String size;
     int status; // 1 opened,0 cloded
@@ -104,7 +104,7 @@ public class FileDesc {
     }
 
     public static FileDesc fromString(String str){
-        if (str == null)
+        if (str == "")
             return null;
         return jsonToJavaBean(str);
     }
