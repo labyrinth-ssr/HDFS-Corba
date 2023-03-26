@@ -12,7 +12,6 @@ public class ClientImpl implements Client {
 
     static NameNode namenode;
     static DataNode dataNode;
-
     int globalBlockId = 0;
 
     ArrayList<Integer> globalBlockIds = new ArrayList<>();

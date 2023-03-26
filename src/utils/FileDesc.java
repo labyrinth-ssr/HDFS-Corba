@@ -29,6 +29,20 @@ public class FileDesc {
     int status; // 1 opened,0 cloded
     boolean excluded = false;
 
+    public int getFd() {
+        return fd;
+    }
+
+    public void setFd(int fd) {
+        this.fd = fd;
+    }
+
+    public static void setId(long id) {
+        FileDesc.id = id;
+    }
+
+
+
     public FileDesc(String name) {
         this.id = id++;
         this.name = name;
@@ -44,7 +58,7 @@ public class FileDesc {
         this.locations = locations;
     }
 
-    public static long getId() {
+    public long getId() {
         return id;
     }
 

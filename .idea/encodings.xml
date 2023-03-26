@@ -7,7 +7,7 @@
     <file url="file://$PROJECT_DIR$/src/api/NameNodeOperations.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/impl/ClientImpl.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/impl/NameNodeImpl.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/server/HDFSServer.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/server/NameNodeLauncher.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/utils/FileDesc.java" charset="GBK" />
     <file url="PROJECT" charset="GBK" />
   </component>

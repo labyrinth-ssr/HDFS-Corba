@@ -102,10 +102,22 @@ public class NameNodeImpl extends NameNodePOA {
         return newFileInfo.toString();
     }
 
+    FileDesc getFileDescById(long id){
+        for (FileDesc fileDesc :
+                fileInfos) {
+            if (id == fileDesc.getId()){
+                return fileDesc;
+            }
+        }
+        return null;
+    }
+
 //    close(filepath)：更新文件的元数据写入硬盘
     @Override
     public void close(String fileInfo) {
         FileDesc fileDesc = FileDesc.fromString(fileInfo);
+        FileDesc fileDesc1 = getFileDescById(fileDesc.getId());
+        fileDesc1.setStatus(0);
         System.out.println("namenode:close:"+fileDesc.getName());
         try {
             FileOutputStream f = new FileOutputStream("FSImage");

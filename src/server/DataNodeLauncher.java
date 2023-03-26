@@ -6,20 +6,19 @@ import org.omg.CORBA.ORB;
 import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
-import org.omg.PortableServer.LifespanPolicyValue;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAHelper;
 import api.DataNode;
 
 import java.util.Properties;
 
-public class HDFSServerData {
+public class DataNodeLauncher {
 
     public static void main(String[] args) {
         try {
             Properties properties = new Properties();
             properties.put("org.omg.CORBA.ORBInitialHost", "127.0.0.1");  //指定ORB的ip地址
-            properties.put("org.omg.CORBA.ORBInitialPort", "1051");       //指定ORB的端口
+//            properties.put("org.omg.CORBA.ORBInitialPort", "1051");       //指定ORB的端口
 
             // 初始化ORB对象
             ORB orb = ORB.init(args, properties);
