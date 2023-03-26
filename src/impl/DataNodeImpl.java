@@ -14,21 +14,29 @@ public class DataNodeImpl extends DataNodePOA {
         int id;
         byte[] data = new byte[0];
     }
-    ArrayList<Block> blocks = new ArrayList<>();
+    ArrayList<Block> blocks = new ArrayList<>(0);
     int size = 0;
 
-    public DataNodeImpl(){
+//    public DataNodeImpl(){
+//        for (int i=0;i<10;i++){
+//            Block block = new Block();
+//            block.id = i;
+//            blocks.add(block);
+//        }
 //        Block newBlock = new Block();
 //        newBlock.data = new byte [0];
 //        blocks.add(newBlock);
-    }
+//    }
 
 
     // 每个node
     @Override
     public byte[] read(int block_id) {
-        System.out.println("read");
-        return blocks.get(block_id).data;
+        System.out.println("datanode:read");
+        Block block= getBlockById(block_id);
+        if (block==null)
+            return "".getBytes();
+        return block.data;
     }
 
     private Block getBlockById(int id) {
@@ -67,7 +75,7 @@ public class DataNodeImpl extends DataNodePOA {
     @Override
     public int randomBlockId() {
         int min = 0;
-        int max = blocks.size()-1;
+        int max = 10;
         int res = min + (int)(Math.random()*(max - min +1));
         System.out.println("res"+res);
         return res;

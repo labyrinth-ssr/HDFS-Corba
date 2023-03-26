@@ -21,7 +21,7 @@ public class NameNodeImpl extends NameNodePOA {
     public ArrayList<FileDesc> initFileDescs(){
         try {
             ArrayList<FileDesc> fileInfos = new ArrayList<>();
-            File file = new File("src/server/fs/FSImage.json");
+            File file = new File("FSImage.json");
             FileReader fr = new FileReader(file);
             StringBuilder str = new StringBuilder();
             int ch = 0;
@@ -44,6 +44,7 @@ public class NameNodeImpl extends NameNodePOA {
         }
 
     }
+
 
 //    NameNode作为服务端，维护文件系统的元数据信息，包括文件目录结构、 文
 //    件大小、 文件所在的DataNode以及文件划分的数据块信息等。 它会响应客户端
@@ -75,8 +76,10 @@ public class NameNodeImpl extends NameNodePOA {
 //    的open(filename,w)请求将会返回null
     @Override
     public String open(String filepath, int mode) {
+        System.out.println("fileinfo size:"+fileInfos.size());
         for (FileDesc fileInfo : fileInfos) {
             if (Objects.equals(fileInfo.getName(), filepath)){
+                System.out.println("open file:"+fileInfo.toString());
                 fileInfo.setMode(mode);
                 if ((mode==0b10 || mode == 0b11) && fileInfo.getStatus()==1){
                     System.out.println("namenode: open: opened by other writer");
@@ -92,9 +95,10 @@ public class NameNodeImpl extends NameNodePOA {
         System.out.println("namenode: create file");
         FileDesc newFileInfo = new FileDesc(filepath);
         newFileInfo.setMode(mode);
-        ArrayList<Integer> locations = new ArrayList<>();
-        locations.add((int)(Math.random()*(2)));
-        newFileInfo.setLocations(locations);
+        newFileInfo.setAccessTime(System.currentTimeMillis());
+//        ArrayList<Integer> locations = new ArrayList<>();
+//        locations.add((int)(Math.random()*(2)));
+//        newFileInfo.setLocations(locations);
         if (mode==0b10 || mode == 0b11){
             newFileInfo.setStatus(1);
         }
@@ -112,16 +116,48 @@ public class NameNodeImpl extends NameNodePOA {
         return null;
     }
 
+    public String getLocations(long id,int size){
+        FileDesc fileDesc = getFileDescById(id);
+        if (fileDesc.getLocations().isEmpty()){
+            ArrayList<Integer> locations = new ArrayList<>();
+            for (int i=0;i<size;i++){
+                locations.add((int)(Math.random()*(2)));
+            }
+            System.out.println("namenode:create location:"+locations.toString());
+            return locations.toString();
+        } else
+            return fileDesc.getLocations().toString();
+    }
+
+    public void updateFileDesc(String fileDescStr,long id){
+//        FileDesc fileDesc = getFileDescById(id);
+        for (int i = 0; i < fileInfos.size(); i++) {
+            if (fileInfos.get(i).getId()==id){
+                fileInfos.set(i, FileDesc.fromString(fileDescStr));
+            }
+        }
+    }
+
+    public static String listToJson(ArrayList<FileDesc> list) {
+
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        System.out.println("json"+json);
+        return json;
+    }
+
 //    close(filepath)：更新文件的元数据写入硬盘
     @Override
     public void close(String fileInfo) {
         FileDesc fileDesc = FileDesc.fromString(fileInfo);
+        updateFileDesc(fileInfo,fileDesc.getId());
         FileDesc fileDesc1 = getFileDescById(fileDesc.getId());
         fileDesc1.setStatus(0);
-        System.out.println("namenode:close:"+fileDesc.getName());
+        fileDesc1.setModifyTime(System.currentTimeMillis());
+        System.out.println("namenode:close:"+fileDesc1.toString());
         try {
-            FileOutputStream f = new FileOutputStream("FSImage");
-            f.write(fileInfo.getBytes(StandardCharsets.UTF_8));
+            FileOutputStream f = new FileOutputStream("FSImage.json");
+            f.write(listToJson(fileInfos).getBytes(StandardCharsets.UTF_8));
             f.flush();
             f.close();
         } catch (IOException e) {

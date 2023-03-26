@@ -1,24 +1,13 @@
 module api {
     typedef sequence<octet> byteArray;
-    typedef sequence<string> MyList;
-    typedef sequence<octet> MyData;
-    interface TFile
-        {
-            /* fileData为服务端返回的流 */
-            boolean download(in string fileName,out MyData fileData);
-            /* fileData为客户端输入的流 */
-            boolean upload(in string fileName,in MyData fileData);
-            /* 服务器端所有可下载的文件名 */
-            void listAllFile(out MyList allFileNames);
-        };
     interface DataNode {
         byteArray read(in long block_id);
         void append(in long block_id, in byteArray bytes);
         long randomBlockId();
     };
     interface NameNode{
-    //TODO: complete the interface design
     string open(in string filepath,in long mode);
     void close(in string fileInfo);
+    string getLocations(in long long id,in long size);
     };
 };

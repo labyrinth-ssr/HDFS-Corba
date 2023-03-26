@@ -25,9 +25,52 @@ public class FileDesc {
     int fd;
     ArrayList<Integer> locations = new ArrayList<>();
     int[] children;
-    String size;
+    int fileSize;
     int status; // 1 opened,0 cloded
-    boolean excluded = false;
+    ArrayList<Integer> blockIds = new ArrayList<>();
+    long accessTime;
+    long modifyTime;
+    long changeTime;
+
+    public void setAccessTime(long accessTime) {
+        this.accessTime = accessTime;
+    }
+
+    public long getAccessTime() {
+        return accessTime;
+    }
+
+    public void setModifyTime(long modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    public long getModifyTime() {
+        return modifyTime;
+    }
+
+    public void getChangeTime(long changeTime) {
+        this.changeTime = changeTime;
+    }
+
+    public long getChangeTime() {
+        return changeTime;
+    }
+
+    public ArrayList<Integer> getBlockIds() {
+        return blockIds;
+    }
+
+    public void addBlockIds(int blockId){
+        blockIds.add(blockId);
+    }
+
+    public int getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(int fileSize) {
+        this.fileSize = fileSize;
+    }
 
     public int getFd() {
         return fd;
